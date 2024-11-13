@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: viru786/frontend1:20241113055804
+    container_name: frontend # Assumes there's a Dockerfile in the frontend directory
+    ports:
+      - "3000:3000"  # Maps frontend container port 3000 to localhost 3000
+    depends_on:
+      - backend  # Ensures backend service starts before frontend
+
+  backend:
+    image: viru786/backend1:20241113055804
+    container_name: backend  # Assumes there's a Dockerfile in the backend directory
+    ports:
+      - "5000:5000"  # Maps backend container port 5000 to localhost 5000
+        environment:
+        - MONGO_URI=mongodb://13.127.88.246:27017/sampleApp  # MongoDB connection URI
+    depends_on:
+      - mongo  # Ensures MongoDB starts before backend
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"  # Maps MongoDB container port 27017 to localhost 27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin  # Sets MongoDB root username
+      - MONGO_INITDB_ROOT_PASSWORD=password  # Sets MongoDB root password
+    volumes:
+      - mongo_data:/data/db  # Sets up volume for MongoDB data persistence
+
+volumes:
+  mongo_data:
+    driver: local  # Uses local driver to persist MongoDB data
+
